@@ -37,9 +37,6 @@
     @endsection
 
 
-
-
-
 @push('js')
 
     <script src="{{ url('/') }}/newfullcalendar/moment.min.js"></script>
@@ -53,7 +50,6 @@
             $('#calendar').fullCalendar({
                 schedulerLicenseKey: 'GPL-My-Project-Is-Open-Source',
                 now: new Date(),
-
                 editable: false, // enable draggable events
                 aspectRatio: 1.8,
                 scrollTime: '08:00', // undo default 6am scrollTime
@@ -67,24 +63,33 @@
                 slotLabelFormat: ['H:mm'],
                 resources: '{!! route('fullcalendar.roomall') !!}',
                 events: '{!! route('fullcalendar.bookingall') !!}',
-                timeFormat: 'H(:mm)'
-                /*  events: [
-                      {
-                          id: "1",
-                          resourceId: "1",
-                          start: "2018-06-27 09:00:00",
-                          end: "2018-06-27 12:00:00",
-                          title: "Sia",
-                      },
-                      {
-                          id: "2",
-                          resourceId: "1",
-                          start: "2018-06-27 15:00:00",
-                          end: "2018-06-27 19:00:00",
-                          title: "Cruciani",
-                      }
-                  ]*/
+                timeFormat: 'H(:mm)',
+
+                eventMouseover: function(calEvent, jsEvent) {
+                    var tooltip = '<div class="tooltipevent" style="padding-left: 2px;border-radius: 5px 5px 5px 5px;;width:180px;height:120px;background:darkorange;position:absolute;z-index:10001;">' + calEvent.name + '<br />' + calEvent.title
+                                    +   '<br />Sede ' + calEvent.location
+                                    +   '<br /> dal ' + calEvent.start.format('DD-MM-YYYY - HH:mm')
+                                    +   '<br /> al ' + calEvent.end.format('DD-MM-YYYY - HH:mm')
+                                    +   '<br />&euro; ' + calEvent.price + ',00'
+                                    +    '</div>';
+                    $("body").append(tooltip);
+                    $(this).mouseover(function(e) {
+                        $(this).css('z-index', 10000);
+                        $('.tooltipevent').fadeIn('500');
+                        $('.tooltipevent').fadeTo('10', 1.9);
+                    }).mousemove(function(e) {
+                        $('.tooltipevent').css('top', e.pageY + 10);
+                        $('.tooltipevent').css('left', e.pageX + 20);
+                    });
+                },
+
+                eventMouseout: function(calEvent, jsEvent) {
+                    $(this).css('z-index', 8);
+                    $('.tooltipevent').remove();
+                }
             });
+
+
         });
 
     </script>
